@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>infastracture — Open Source Infrastructure Projects</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            25% { background-position: 100% 50%; }
+            50% { background-position: 100% 0%; }
+            75% { background-position: 0% 100%; }
+            100% { background-position: 0% 50%; }
+        }
+        .blue-gradient-animated {
+            background: linear-gradient(-45deg, #0a1628, #0d2847, #0f3460, #1a5276, #0b3d91, #162447, #1b3a5c, #0a1628);
+            background-size: 400% 400%;
+            animation: gradientShift 20s ease infinite;
+        }
+        .blue-gradient-card {
+            background: linear-gradient(-45deg, rgba(13,40,71,0.8), rgba(11,61,145,0.6), rgba(22,36,71,0.8));
+            background-size: 200% 200%;
+            animation: gradientShift 15s ease infinite;
+        }
+        .glass-nav {
+            background: rgba(10, 22, 40, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .glass-card {
+            background: rgba(13, 40, 71, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .glass-card-hover:hover {
+            background: rgba(13, 40, 71, 0.6);
+            border-color: rgba(56, 189, 248, 0.3);
+            box-shadow: 0 0 40px rgba(56, 189, 248, 0.08);
+        }
+        .glow-blue {
+            box-shadow: 0 0 60px rgba(56, 189, 248, 0.15), 0 0 120px rgba(37, 99, 235, 0.08);
+        }
+        .text-glow {
+            text-shadow: 0 0 40px rgba(56, 189, 248, 0.3);
+        }
+        .code-block {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .feature-icon {
+            background: linear-gradient(135deg, rgba(56,189,248,0.15), rgba(37,99,235,0.15));
+            border: 1px solid rgba(56,189,248,0.2);
+        }
+        .stat-number {
+            background: linear-gradient(135deg, #38bdf8, #2563eb, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            transition: all 200ms;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            box-shadow: 0 0 30px rgba(37, 99, 235, 0.4);
+            transform: translateY(-1px);
+        }
+        .btn-secondary {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.15);
+            transition: all 200ms;
+        }
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.3);
+        }
+        .btn-wip {
+            background: rgba(255,255,255,0.03);
+            border: 1px dashed rgba(255,255,255,0.15);
+            cursor: default;
+        }
+        .donate-card {
+            background: rgba(13, 40, 71, 0.35);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.08);
+            transition: all 300ms;
+            cursor: pointer;
+        }
+        .donate-card:hover {
+            background: rgba(13, 40, 71, 0.6);
+            border-color: rgba(56, 189, 248, 0.4);
+            box-shadow: 0 0 50px rgba(56, 189, 248, 0.12);
+            transform: translateY(-6px);
+        }
+        .donate-card.selected {
+            border-color: rgba(56, 189, 248, 0.6);
+            box-shadow: 0 0 50px rgba(56, 189, 248, 0.2);
+            background: rgba(13, 40, 71, 0.65);
+        }
+        .donate-card.selected .donate-check { opacity: 1; transform: scale(1); }
+        .donate-check { opacity: 0; transform: scale(0.5); transition: all 200ms; }
+        .timeline-line { background: linear-gradient(to bottom, transparent, rgba(56,189,248,0.4), transparent); }
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+        .float-anim { animation: float 6s ease-in-out infinite; }
+        @keyframes pulse-ring { 0% { transform: scale(1); opacity: 0.4; } 100% { transform: scale(1.8); opacity: 0; } }
+        .pulse-ring::before {
+            content: ''; position: absolute; inset: -4px; border-radius: 50%;
+            border: 2px solid rgba(56,189,248,0.4); animation: pulse-ring 2s ease-out infinite;
+        }
+        .scroll-indicator { animation: float 2s ease-in-out infinite; }
+        .project-tag {
+            background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.2); color: #7dd3fc;
+        }
+        .wip-tag {
+            background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.25); color: #fbbf24;
+        }
+        .grid-bg {
+            background-image:
+                linear-gradient(rgba(56,189,248,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(56,189,248,0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+        .noise-overlay::before {
+            content: ''; position: absolute; inset: 0; opacity: 0.015; pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0a1628; }
+        ::-webkit-scrollbar-thumb { background: #1e3a5f; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #2563eb; }
+    </style>
+</head>
+<body class="font-sans text-white antialiased blue-gradient-animated noise-overlay relative overflow-x-hidden">
+
+    <!-- Navigation -->
+    <nav class="glass-nav fixed top-0 left-0 right-0 z-40 h-16">
+        <div class="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
+            <a href="#" class="flex items-center gap-3 group">
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center font-semibold text-sm">i</div>
+                <span class="font-semibold text-white tracking-tight">infastracture</span>
+            </a>
+            <div class="hidden md:flex items-center gap-8">
+                <a href="#projects" class="text-sm text-neutral-400 hover:text-white transition-colors duration-200">Projects</a>
+                <a href="#features" class="text-sm text-neutral-400 hover:text-white transition-colors duration-200">Features</a>
+                <a href="#roadmap" class="text-sm text-neutral-400 hover:text-white transition-colors duration-200">Roadmap</a>
+                <a href="#contribute" class="text-sm text-sky-400 hover:text-sky-300 transition-colors duration-200 font-medium">Contribute</a>
+            </div>
+            <div class="flex items-center gap-3">
+                <a href="https://github.com/infastracture" target="_blank" class="btn-secondary px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2">
+                    <span class="iconify" data-icon="mdi:github" data-width="16"></span>
+                    GitHub
+                </a>
+                <button id="mobile-menu-btn" class="md:hidden p-2 text-neutral-400 hover:text-white">
+                    <span class="iconify" data-icon="mdi:menu" data-width="24"></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" id="mobile-menu-overlay"></div>
+        <div class="absolute right-0 top-0 bottom-0 w-72 bg-[#0d1f3c] border-l border-white/10 p-6 flex flex-col">
+            <div class="flex justify-between items-center mb-8">
+                <span class="font-semibold">Menu</span>
+                <button id="mobile-menu-close" class="p-2 text-neutral-400 hover:text-white">
+                    <span class="iconify" data-icon="mdi:close" data-width="24"></span>
+                </button>
+            </div>
+            <div class="flex flex-col gap-4">
+                <a href="#projects" class="text-neutral-400 hover:text-white transition-colors py-2 mobile-link">Projects</a>
+                <a href="#features" class="text-neutral-400 hover:text-white transition-colors py-2 mobile-link">Features</a>
+                <a href="#roadmap" class="text-neutral-400 hover:text-white transition-colors py-2 mobile-link">Roadmap</a>
+                <a href="#contribute" class="text-sky-400 hover:text-sky-300 transition-colors py-2 font-medium mobile-link">Contribute</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero -->
+    <section class="relative min-h-screen flex items-center justify-center pt-24 pb-20 px-6 grid-bg">
+        <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl float-anim"></div>
+        <div class="absolute bottom-1/4 right-1/4 w-80 h-80 bg-sky-400/5 rounded-full blur-3xl float-anim" style="animation-delay: -3s;"></div>
+        <div class="max-w-4xl mx-auto text-center relative z-10">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-sky-500/20 bg-sky-500/5 mb-8">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 relative pulse-ring"></span>
+                <span class="text-xs font-medium text-sky-300 tracking-wide">Open Source · Always Free</span>
+            </div>
+            <h1 class="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-[1.05] mb-6 text-glow">
+                Building the
+                <span class="bg-gradient-to-r from-sky-400 via-blue-400 to-violet-400 bg-clip-text text-transparent"> infrastructure</span>
+                <br>you deserve.
+            </h1>
+            <p class="text-lg md:text-xl text-neutral-400 font-light leading-relaxed max-w-2xl mx-auto mb-10">
+                From firmware to shell, bootloader to desktop OS — we craft minimal, fast, and beautiful open-source tools for people who care about every byte.
+            </p>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+                <a href="#projects" class="btn-primary px-8 py-3.5 rounded-xl text-sm font-semibold flex items-center gap-2">
+                    Explore Projects
+                    <span class="iconify" data-icon="mdi:arrow-right" data-width="18"></span>
+                </a>
+                <a href="https://github.com/infastracture" target="_blank" class="btn-secondary px-8 py-3.5 rounded-xl text-sm font-medium flex items-center gap-2">
+                    <span class="iconify" data-icon="mdi:github" data-width="18"></span>
+                    Star on GitHub
+                </a>
+            </div>
+            <div class="code-block rounded-2xl p-1 max-w-xl mx-auto glow-blue">
+                <div class="flex items-center gap-2 px-4 py-3 border-b border-white/5">
+                    <div class="w-3 h-3 rounded-full bg-red-500/70"></div>
+                    <div class="w-3 h-3 rounded-full bg-yellow-500/70"></div>
+                    <div class="w-3 h-3 rounded-full bg-green-500/70"></div>
+                    <span class="text-[11px] text-neutral-500 ml-2 font-mono">terminal</span>
+                </div>
+                <div class="p-5 text-left font-mono text-sm leading-7">
+                    <div><span class="text-sky-400">$</span> <span class="text-neutral-300">git clone https://github.com/infastracture/cmshell</span></div>
+                    <div><span class="text-sky-400">$</span> <span class="text-neutral-300">cd cmshell && make install</span></div>
+                    <div><span class="text-emerald-400">✓</span> <span class="text-neutral-500">Installed to /usr/local/bin/cmshell</span></div>
+                    <div><span class="text-sky-400">$</span> <span class="text-neutral-300">cmshell</span></div>
+                    <div class="text-sky-300">→ minimal shell for ricers. loaded.</div>
+                    <div class="flex items-center"><span class="text-sky-400">❯</span> <span class="w-2 h-5 bg-sky-400/70 animate-pulse ml-1"></span></div>
+                </div>
+            </div>
+            <div class="scroll-indicator mt-12 flex flex-col items-center gap-2">
+                <span class="text-[10px] uppercase tracking-[0.2em] text-neutral-600">Scroll</span>
+                <span class="iconify text-neutral-600" data-icon="mdi:chevron-down" data-width="20"></span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects -->
+    <section id="projects" class="relative py-24 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <span class="text-xs font-semibold uppercase tracking-[0.2em] text-sky-400 mb-4 block">Our Projects</span>
+                <h2 class="text-3xl md:text-5xl font-bold tracking-tight mb-4">
+                    Crafted with <span class="text-sky-400">precision</span>
+                </h2>
+                <p class="text-neutral-400 font-light max-w-xl mx-auto">
+                    Every project is designed to be minimal, fast, and opinionated. No bloat, no compromises.
+                </p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <!-- Atmos -->
+                <div class="glass-card glass-card-hover rounded-2xl p-8 group relative overflow-hidden transition-all duration-300">
+                    <div class="absolute top-0 right-0 w-48 h-48 bg-sky-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-sky-500/10 transition-colors duration-500"></div>
+                    <div class="relative z-10">
+                        <div class="flex items-start justify-between mb-6">
+                            <div class="feature-icon w-14 h-14 rounded-2xl flex items-center justify-center">
+                                <span class="iconify text-sky-400" data-icon="mdi:desktop-mac" data-width="28"></span>
+                            </div>
+                            <div class="flex gap-2">
+                                <span class="project-tag text-[10px] px-2.5 py-1 rounded-full font-mono">Hyprland</span>
+                                <span class="project-tag text-[10px] px-2.5 py-1 rounded-full font-mono">OS</span>
+                            </div>
+                        </div>
+                        <h3 class="text-2xl font-bold tracking-tight mb-2">Atmos</h3>
+                        <p class="text-neutral-400 font-light leading-relaxed mb-6">
+                            Hyprland OS with cool theme. A complete, visually stunning desktop experience built on top of Hyprland with a meticulously crafted color scheme, custom animations, and pre-configured workflows. Every pixel is intentional.
+                        </p>
+                        <ul class="space-y-2.5 mb-8">
+                            <li class="flex items-center gap-2.5 text-sm text-neutral-400">
+                                <span class="iconify text-sky-400/70" data-icon="mdi:check-circle" data-width="16"></span>
+                                Pre-configured Hyprland with Waybar & wofi
+                            </li>
+                            <li class="flex items-center gap-2.5 text-sm text-neutral-400">
+                                <span class="iconify text-sky-400/70" data-icon="mdi:check-circle" data-width="16"></span>
+                                Custom Catppuccin-inspired blue theme
+                            </li>
+                            <li class="flex items-center gap-2.5 text-sm text-neutral-400">
+                                <span class="iconify text-sky-400/70" data-icon="mdi:check-circle" data-width="16"></span>
+                                Smooth border & fade animations out of the box
+                            </li>
+                            <li class="flex items-center gap-2.5 text-sm text-neutral-400">
+                                <span class="iconify text-sky-400/70" data-icon="mdi:check-circle" data-width="16"></span>
+                                ISO-ready for bare-metal installation
+                            </li>
+                        </ul>
+                        <a href="https://atmos.infastracture.xyz" target="_blank" class="btn-primary px-5 py-2.5 rounded-lg text-sm font-medium inline-flex items-center gap-2">
+                            <span class="iconify" data-icon="mdi:open-in-new" data-width="16"></span>
+                            Visit Atmos
+                        </a>
+                    </div>
+                </div>
+
+                <!-- cmshell -->
+                <div class="glass-card glass-card-hover rounded-2xl p-8 group relative overflow-hidden transition-all duration-300">
+                    <div class="absolute top-0 right-0 w-48 h-48 bg-emerald-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-emerald-500/10 transition-colors duration-500"></div>
+                    <div class="relative z-10">
+                        <div class="flex items-start justify-between mb-6">
+                            <div class="feature-icon w-14 h-14 rounded-2xl flex items-center justify-center">
+                                <span class="iconify text-emerald-400" data-icon="mdi:console-line" data-width="28"></span>
+                            </div>
+                            <div class="flex gap-2">
+                                <span class="project-tag text-[10px] px-2.5 py-1 rounded-full font-mono">Shell</span>
+                                <span class="project-tag text-[10px] px-2.5 py-1 rounded-full font-mono">C</span>
+                            </div>
+                        </div>
+                        <h3 class="text-2xl font-bold tracking-tight mb-2">cmshell</h3>
+                        <p class="text-neutral-400 font-light leading-relaxed mb-6">
+                            Minimal shell for ricers. A lightweight, blazingly fast UNIX shell written in C with zero dependencies. Designed for users who want a clean, customizable terminal experience without the weight of bash or zsh.
+                        </p>
+                        <ul class="space-y-2.5 mb-8">
+                            <li class="flex items-center gap-2.5 text-sm text-neutral-400">
+                                <span class="iconify text-emerald-400/70" data-icon="mdi:check-circle" data-width="16"></span>
+                                &lt;5KB binary, zero runtime dependencies
+                            </li>
+                            <li class="flex items-center gap-2.5 text-sm text-neutral-400">
+                                <span class="iconify text-emerald-400/70" data-icon="mdi:check-circle" data-width="16"></span>
+                                Customizable prompt with ANSI color support
+                            </li>
+                            <li class="flex items-center gap-2.5 text-sm text-neutral-400">
+                                <span class="iconify text-emerald-400/70" data-icon="mdi:check-circle" data-width="16"></span>
+                                Built-in tab completion & history
+                            </li>
+                            <li class="flex items-center gap-2.5 text-sm text-neutral-400">
+                                <span class="iconify text-emerald-400/70" data-icon="mdi:check-circle" data-width="16"></span>
+                                Perfect for ricing setups and minimal distros
+                            </li>
+                        </ul>
+                        <a href="https://github.com/infastracture/cmshell" target="_blank" class="btn-primary px-5 py-2.5 rounded-lg text-sm font-medium inline-flex items-center gap-2">
+                            <span class="iconify" data-icon="mdi:github" data-width="16"></span>
+                            View Repo
+                        </a>
+                    </div>
+                </div>
+
+                <!-- inSeaBIOS -->
+                <div class="glass-card rounded-2xl p-8 group relative overflow-hidden transition-all duration-300 opacity-80">
+                    <div class="absolute top-0 right-0 w-48 h-48 bg-violet-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+                    <div class="relative z-10">
+                        <div class="flex items-start justify-between mb-6">
+                            <div class="feature-icon w-14 h-14 rounded-2xl flex items-center justify-center">
+                                <span class="iconify text-violet-400" data-icon="mdi:chip" data-width="28"></span>
+                            </div>
+                            <div class="flex gap-2">
+                                <span class="wip-tag text-[10px] px-2.5 py-1 rounded-full font-mono">WIP</span>
+                                <span class="project-tag text-[10px] px-2.5 py-1 rounded-full font-mono">Firmware</span>
+                            </div>
+                        </div>
+                        <h3 class="text-2xl font-bold tracking-tight mb-2">inSeaBIOS</h3>
+                        <p class="text-neutral-400 font-light leading-relaxed mb-6">
+                            Lightweight open-source BIOS implementation for minimal x86 systems. A modern fork of SeaBIOS trimmed down to the essentials — faster boot times, smaller footprint, and cleaner codebase for embedded and retro computing.
+                        </p>
+                        <ul class="space-y-2.5 mb-8">
+                            <li class="flex items-center gap-2.5 text-sm text-neutral-500">
+                                <span class="iconify text-neutral-600" data-icon="mdi:circle-outline" data-width="16"></span>
+                                Sub-100ms POST time on modern hardware
+                            </li>
+                            <li class="flex items-center gap-2.5 text-sm text-neutral-500">
+                                <span class="iconify text-neutral-600" data-icon="mdi:circle-outline" data-width="16"></span>
+                                Stripped down to ~32KB flash image
+                            </li>
+                            <li class="flex items-center gap-2.5 text-sm text-neutral-500">
+                                <span class="iconify text-neutral-600" data-icon="mdi:circle-outline" data-width="16"></span>
+                                Legacy BIOS & basic UEFI CSM support
+                            </li>
+                            <li class="flex items-center gap-2.5 text-sm text-neutral-500">
+                                <span class="iconify text-neutral-600" data-icon="mdi:circle-outline" data-width="16"></span>
+                                Ideal for QEMU/KVM virtual machines
+                            </li>
+                        </ul>
+                        <div class="btn-wip px-5 py-2.5 rounded-lg text-sm font-medium inline-flex items-center gap-2 text-neutral-500">
+                            <span class="iconify" data-icon="mdi:clock-outline" data-width="16"></span>
+                            Coming Soon
+                        </div>
+                    </div>
+                </div>
+
+                <!-- proboot -->
+                <div class="glass-card rounded-2xl p-8 group relative overflow-hidden transition-all duration-300 opacity-80">
+                    <div class="absolute top-0 right-0 w-48 h-48 bg-amber-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+                    <div class="relative z-10">
+                        <div class="flex items-start justify-between mb-6">
+                            <div class="feature-icon w-14 h-14 rounded-2xl flex items-center justify-center">
+                                <span class="iconify text-amber-400" data-icon="mdi:boot" data-width="28"></span>
+                            </div>
+                            <div class="flex gap-2">
+                                <span class="wip-tag text-[10px] px-2.5 py-1 rounded-full font-mono">WIP</span>
+                                <span class="project-tag text-[10px] px-2.5 py-1 rounded-full font-mono">Rust</span>
+                            </div>
+                        </div>
+                        <h3 class="text-2xl font-bold tracking-tight mb-2">proboot</h3>
+                        <p class="text-neutral-400 font-light leading-relaxed mb-6">
+                            Fast and secure bootloader for modern Linux distributions. Written in Rust with safety guarantees, proboot replaces GRUB with a sleek, minimal alternative featuring instant boot, themeable menu, and native LUKS2 decryption.
+                        </p>
+                        <ul class="space-y-2.5 mb-8">
+                            <li class="flex items-center gap-2.5 text-sm text-neutral-500">
+                                <span class="iconify text-neutral-600" data-icon="mdi:circle-outline" data-width="16"></span>
+                                Written in Rust — memory safe by design
+                            </li>
+                            <li class="flex items-center gap-2.5 text-sm text-neutral-500">
+                                <span class="iconify text-neutral-600" data-icon="mdi:circle-outline" data-width="16"></span>
+                                Native LUKS2 & TPM2 unlock support
+                            </li>
+                            <li class="flex items-center gap-2.5 text-sm text-neutral-500">
+                                <span class="iconify text-neutral-600" data-icon="mdi:circle-outline" data-width="16"></span>
+                                Customizable boot menu with TUI themes
+                            </li>
+                            <li class="flex items-center gap-2.5 text-sm text-neutral-500">
+                                <span class="iconify text-neutral-600" data-icon="mdi:circle-outline" data-width="16"></span>
+                                Drop-in GRUB replacement with migration tool
+                            </li>
+                        </ul>
+                        <div class="btn-wip px-5 py-2.5 rounded-lg text-sm font-medium inline-flex items-center gap-2 text-neutral-500">
+                            <span class="iconify" data-icon="mdi:clock-outline" data-width="16"></span>
+                            Coming Soon
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Install -->
+    <section class="py-12 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="code-block rounded-2xl p-6 glow-blue">
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="iconify text-sky-400" data-icon="mdi:lightning-bolt" data-width="20"></span>
+                    <span class="text-sm font-semibold text-sky-300">Quick Install</span>
+                </div>
+                <div class="font-mono text-sm space-y-3 text-neutral-400">
+                    <div>
+                        <span class="text-neutral-600"># Install cmshell</span><br>
+                        <span class="text-sky-400">$</span> git clone https://github.com/infastracture/cmshell<br>
+                        <span class="text-sky-400">$</span> cd cmshell && sudo make install
+                    </div>
+                    <div>
+                        <span class="text-neutral-600"># Visit Atmos</span><br>
+                        <span class="text-sky-400">$</span> <span class="text-sky-300">open https://atmos.infastracture.xyz</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features" class="relative py-24 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <span class="text-xs font-semibold uppercase tracking-[0.2em] text-sky-400 mb-4 block">Why infastracture</span>
+                <h2 class="text-3xl md:text-5xl font-bold tracking-tight mb-4">
+                    Principles that <span class="text-sky-400">matter</span>
+                </h2>
+                <p class="text-neutral-400 font-light max-w-xl mx-auto">
+                    Every line of code follows our core philosophy — minimalism, performance, and transparency.
+                </p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="glass-card rounded-2xl p-7 group hover:border-sky-500/20 transition-all duration-300">
+                    <div class="feature-icon w-12 h-12 rounded-xl flex items-center justify-center mb-5">
+                        <span class="iconify text-sky-400" data-icon="mdi:minimize" data-width="24"></span>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-2">Zero Bloat</h3>
+                    <p class="text-sm text-neutral-400 font-light leading-relaxed">Every project is stripped to its absolute essentials. No unnecessary features, no hidden dependencies, no surprises.</p>
+                </div>
+                <div class="glass-card rounded-2xl p-7 group hover:border-sky-500/20 transition-all duration-300">
+                    <div class="feature-icon w-12 h-12 rounded-xl flex items-center justify-center mb-5">
+                        <span class="iconify text-sky-400" data-icon="mdi:speedometer" data-width="24"></span>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-2">Blazing Fast</h3>
+                    <p class="text-sm text-neutral-400 font-light leading-relaxed">Sub-millisecond shell startup, sub-100ms BIOS POST, instant bootloader handoff. We obsess over latency.</p>
+                </div>
+                <div class="glass-card rounded-2xl p-7 group hover:border-sky-500/20 transition-all duration-300">
+                    <div class="feature-icon w-12 h-12 rounded-xl flex items-center justify-center mb-5">
+                        <span class="iconify text-sky-400" data-icon="mdi:open-source-initiative" data-width="24"></span>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-2">Fully Open Source</h3>
+                    <p class="text-sm text-neutral-400 font-light leading-relaxed">MIT/GPL licensed. No telemetry, no phone-home, no premium tiers. The source is the documentation.</p>
+                </div>
+                <div class="glass-card rounded-2xl p-7 group hover:border-sky-500/20 transition-all duration-300">
+                    <div class="feature-icon w-12 h-12 rounded-xl flex items-center justify-center mb-5">
+                        <span class="iconify text-sky-400" data-icon="mdi:palette" data-width="24"></span>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-2">Ricer-Friendly</h3>
+                    <p class="text-sm text-neutral-400 font-light leading-relaxed">Built by ricers, for ricers. Deep theming, custom colors, and visual tweaking out of the box.</p>
+                </div>
+                <div class="glass-card rounded-2xl p-7 group hover:border-sky-500/20 transition-all duration-300">
+                    <div class="feature-icon w-12 h-12 rounded-xl flex items-center justify-center mb-5">
+                        <span class="iconify text-sky-400" data-icon="mdi:shield-check" data-width="24"></span>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-2">Security First</h3>
+                    <p class="text-sm text-neutral-400 font-light leading-relaxed">Memory-safe languages where possible. proboot uses Rust, cmshell avoids dynamic allocation.</p>
+                </div>
+                <div class="glass-card rounded-2xl p-7 group hover:border-sky-500/20 transition-all duration-300">
+                    <div class="feature-icon w-12 h-12 rounded-xl flex items-center justify-center mb-5">
+                        <span class="iconify text-sky-400" data-icon="mdi:document-text" data-width="24"></span>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-2">Well Documented</h3>
+                    <p class="text-sm text-neutral-400 font-light leading-relaxed">Comprehensive READMEs, inline comments, and wiki pages. If you can't figure it out in 5 minutes, it's a bug.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Roadmap -->
+    <section id="roadmap" class="py-24 px-6">
+        <div class="max-w-3xl mx-auto">
+            <div class="text-center mb-16">
+                <span class="text-xs font-semibold uppercase tracking-[0.2em] text-sky-400 mb-4 block">Roadmap</span>
+                <h2 class="text-3xl md:text-4xl font-bold tracking-tight mb-4">What's <span class="text-sky-400">coming next</span></h2>
+            </div>
+            <div class="relative">
+                <div class="absolute left-4 md:left-1/2 top-0 bottom-0 w-px timeline-line md:-translate-x-px"></div>
+                <div class="space-y-12">
+
+                    <div class="relative flex items-start gap-8 md:gap-0">
+                        <div class="hidden md:block md:w-1/2 md:pr-12 md:text-right">
+                            <span class="text-xs font-mono text-sky-400">Q1 2025</span>
+                            <h3 class="text-lg font-semibold mt-1">cmshell 2.0</h3>
+                            <p class="text-sm text-neutral-400 mt-1 font-light">Plugin system, Lua scripting support, and built-in syntax highlighting.</p>
+                        </div>
+                        <div class="relative z-10 w-8 h-8 rounded-full bg-sky-500/20 border-2 border-sky-400 flex-shrink-0 md:absolute md:left-1/2 md:-translate-x-1/2 flex items-center justify-center">
+                            <div class="w-2.5 h-2.5 rounded-full bg-sky-400"></div>
+                        </div>
+                        <div class="md:w-1/2 md:pl-12 md:hidden">
+                            <span class="text-xs font-mono text-sky-400">Q1 2025</span>
+                            <h3 class="text-lg font-semibold mt-1">cmshell 2.0</h3>
+                            <p class="text-sm text-neutral-400 mt-1 font-light">Plugin system, Lua scripting support, and built-in syntax highlighting.</p>
+                        </div>
+                        <div class="hidden md:block md:w-1/2 md:pl-12"></div>
+                    </div>
+
+                    <div class="relative flex items-start gap-8 md:gap-0">
+                        <div class="hidden md:block md:w-1/2 md:pr-12"></div>
+                        <div class="relative z-10 w-8 h-8 rounded-full bg-emerald-500/20 border-2 border-emerald-400 flex-shrink-0 md:absolute md:left-1/2 md:-translate-x-1/2 flex items-center justify-center">
+                            <div class="w-2.5 h-2.5 rounded-full bg-emerald-400"></div>
+                        </div>
+                        <div class="md:w-1/2 md:pl-12">
+                            <span class="text-xs font-mono text-emerald-400">Q2 2025</span>
+                            <h3 class="text-lg font-semibold mt-1">proboot 1.0 Stable</h3>
+                            <p class="text-sm text-neutral-400 mt-1 font-light">Secure Boot, Btrfs snapshot booting, and automatic fallback kernels.</p>
+                        </div>
+                    </div>
+
+                    <div class="relative flex items-start gap-8 md:gap-0">
+                        <div class="hidden md:block md:w-1/2 md:pr-12 md:text-right">
+                            <span class="text-xs font-mono text-violet-400">Q3 2025</span>
+                            <h3 class="text-lg font-semibold mt-1">Atmos 27.1</h3>
+                            <p class="text-sm text-neutral-400 mt-1 font-light">Built on the next Hyprland release with a completely redesigned theme engine, GTK4 port, and cloud sync for dotfiles.</p>
+                        </div>
+                        <div class="relative z-10 w-8 h-8 rounded-full bg-violet-500/20 border-2 border-violet-400 flex-shrink-0 md:absolute md:left-1/2 md:-translate-x-1/2 flex items-center justify-center">
+                            <div class="w-2.5 h-2.5 rounded-full bg-violet-400"></div>
+                        </div>
+                        <div class="md:w-1/2 md:pl-12 md:hidden">
+                            <span class="text-xs font-mono text-violet-400">Q3 2025</span>
+                            <h3 class="text-lg font-semibold mt-1">Atmos 27.1</h3>
+                            <p class="text-sm text-neutral-400 mt-1 font-light">Built on the next Hyprland release with a completely redesigned theme engine, GTK4 port, and cloud sync for dotfiles.</p>
+                        </div>
+                        <div class="hidden md:block md:w-1/2 md:pl-12"></div>
+                    </div>
+
+                    <div class="relative flex items-start gap-8 md:gap-0">
+                        <div class="hidden md:block md:w-1/2 md:pr-12"></div>
+                        <div class="relative z-10 w-8 h-8 rounded-full bg-amber-500/20 border-2 border-amber-400 flex-shrink-0 md:absolute md:left-1/2 md:-translate-x-1/2 flex items-center justify-center">
+                            <div class="w-2.5 h-2.5 rounded-full bg-amber-400"></div>
+                        </div>
+                        <div class="md:w-1/2 md:pl-12">
+                            <span class="text-xs font-mono text-amber-400">Q4 2025</span>
+                            <h3 class="text-lg font-semibold mt-1">inSeaBIOS UEFI</h3>
+                            <p class="text-sm text-neutral-400 mt-1 font-light">Native UEFI firmware mode, graphical setup, and PXE network boot.</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contribute / Donate -->
+    <section id="contribute" class="py-24 px-6">
+        <div class="max-w-5xl mx-auto">
+            <div class="text-center mb-16">
+                <span class="text-xs font-semibold uppercase tracking-[0.2em] text-sky-400 mb-4 block">Support the Project</span>
+                <h2 class="text-3xl md:text-5xl font-bold tracking-tight mb-4">
+                    Keep the <span class="text-sky-400">infrastructure</span> alive
+                </h2>
+                <p class="text-neutral-400 font-light max-w-xl mx-auto">
+                    infastracture is maintained in free time. Every contribution helps cover hosting, domains, and development tools.
+                </p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                <div class="donate-card rounded-2xl p-8 text-center relative" data-amount="5" onclick="selectAmount(this)">
+                    <div class="donate-check absolute top-4 right-4 w-6 h-6 rounded-full bg-sky-500 flex items-center justify-center">
+                        <span class="iconify text-white" data-icon="mdi:check" data-width="14"></span>
+                    </div>
+                    <div class="feature-icon w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-5">
+                        <span class="iconify text-sky-400" data-icon="mdi:coffee" data-width="32"></span>
+                    </div>
+                    <div class="text-4xl font-bold mb-2 stat-number">$5</div>
+                    <div class="text-sm text-neutral-400 font-medium mb-3">A coffee</div>
+                    <p class="text-xs text-neutral-500 font-light leading-relaxed">Covers a month of domain registration for the project.</p>
+                </div>
+                <div class="donate-card rounded-2xl p-8 text-center relative" data-amount="10" onclick="selectAmount(this)">
+                    <div class="donate-check absolute top-4 right-4 w-6 h-6 rounded-full bg-sky-500 flex items-center justify-center">
+                        <span class="iconify text-white" data-icon="mdi:check" data-width="14"></span>
+                    </div>
+                    <div class="feature-icon w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-5">
+                        <span class="iconify text-emerald-400" data-icon="mdi:heart" data-width="32"></span>
+                    </div>
+                    <div class="text-4xl font-bold mb-2 stat-number">$10</div>
+                    <div class="text-sm text-neutral-400 font-medium mb-3">A supporter</div>
+                    <p class="text-xs text-neutral-500 font-light leading-relaxed">Helps pay for CI/CD runners and release hosting costs.</p>
+                </div>
+                <div class="donate-card rounded-2xl p-8 text-center relative" data-amount="20" onclick="selectAmount(this)">
+                    <div class="donate-check absolute top-4 right-4 w-6 h-6 rounded-full bg-sky-500 flex items-center justify-center">
+                        <span class="iconify text-white" data-icon="mdi:check" data-width="14"></span>
+                    </div>
+                    <div class="feature-icon w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-5">
+                        <span class="iconify text-amber-400" data-icon="mdi:rocket-launch" data-width="32"></span>
+                    </div>
+                    <div class="text-4xl font-bold mb-2 stat-number">$20</div>
+                    <div class="text-sm text-neutral-400 font-medium mb-3">A champion</div>
+                    <p class="text-xs text-neutral-500 font-light leading-relaxed">Covers a full month of server hosting and development tools.</p>
+                </div>
+            </div>
+            <div class="blue-gradient-card rounded-2xl p-8 md:p-10 border border-white/5 mb-8">
+                <div class="flex flex-col md:flex-row items-center gap-6">
+                    <div class="flex-1 w-full">
+                        <label class="text-sm text-neutral-400 mb-2 block">Or enter a custom amount</label>
+                        <div class="relative">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500 font-semibold">$</span>
+                            <input type="number" id="custom-amount" min="1" placeholder="25"
+                                class="w-full pl-8 pr-4 py-3.5 rounded-xl bg-black/30 border border-white/10 text-white text-sm placeholder-neutral-600 focus:outline-none focus:border-sky-500/50 transition-colors font-mono">
+                        </div>
+                    </div>
+                    <div class="w-full md:w-auto flex-shrink-0">
+                        <button id="donate-btn" onclick="handleDonate()" class="w-full md:w-auto btn-primary px-10 py-3.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2.5">
+                            <span class="iconify" data-icon="mdi:paypal" data-width="20"></span>
+                            Donate with PayPal
+                        </button>
+                    </div>
+                </div>
+                <div id="donate-msg" class="mt-4 text-sm hidden"></div>
+                <div class="flex items-center gap-2 mt-5 text-xs text-neutral-600">
+                    <span class="iconify" data-icon="mdi:lock" data-width="14"></span>
+                    <span>Secure PayPal checkout · Sent to AhmedElamir76 · No data stored</span>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="glass-card rounded-xl p-5 flex items-start gap-4">
+                    <span class="iconify text-sky-400/60 mt-0.5 flex-shrink-0" data-icon="mdi:server" data-width="20"></span>
+                    <div>
+                        <div class="text-sm font-medium mb-1">Server Hosting</div>
+                        <div class="text-xs text-neutral-500 font-light">CI runners, release mirrors, and project websites.</div>
+                    </div>
+                </div>
+                <div class="glass-card rounded-xl p-5 flex items-start gap-4">
+                    <span class="iconify text-sky-400/60 mt-0.5 flex-shrink-0" data-icon="mdi:web" data-width="20"></span>
+                    <div>
+                        <div class="text-sm font-medium mb-1">Domains & CDN</div>
+                        <div class="text-xs text-neutral-500 font-light">Keeping infastracture.xyz fast and accessible worldwide.</div>
+                    </div>
+                </div>
+                <div class="glass-card rounded-xl p-5 flex items-start gap-4">
+                    <span class="iconify text-sky-400/60 mt-0.5 flex-shrink-0" data-icon="mdi:code-braces" data-width="20"></span>
+                    <div>
+                        <div class="text-sm font-medium mb-1">Development Tools</div>
+                        <div class="text-xs text-neutral-500 font-light">Licenses, IDEs, and testing hardware for firmware work.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/5 py-16 px-6 relative">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 mb-12">
+                <div class="col-span-2 lg:col-span-1">
+                    <a href="#" class="flex items-center gap-3 mb-4">
+                        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center font-semibold text-sm">i</div>
+                        <span class="font-semibold tracking-tight">infastracture</span>
+                    </a>
+                    <p class="text-sm text-neutral-500 font-light leading-relaxed mb-4">Open source infrastructure tools built with obsession over every detail.</p>
+                    <div class="flex items-center gap-3">
+                        <a href="https://github.com/infastracture" target="_blank" class="w-9 h-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-neutral-400 hover:text-white hover:border-white/20 transition-all">
+                            <span class="iconify" data-icon="mdi:github" data-width="18"></span>
+                        </a>
+                        <a href="#" class="w-9 h-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-neutral-400 hover:text-white hover:border-white/20 transition-all">
+                            <span class="iconify" data-icon="ic:baseline-discord" data-width="18"></span>
+                        </a>
+                        <a href="#" class="w-9 h-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-neutral-400 hover:text-white hover:border-white/20 transition-all">
+                            <span class="iconify" data-icon="mdi:matrix" data-width="18"></span>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-xs font-semibold uppercase tracking-[0.15em] text-neutral-400 mb-4">Projects</h4>
+                    <ul class="space-y-2.5">
+                        <li><a href="https://atmos.infastracture.xyz" target="_blank" class="text-sm text-neutral-500 hover:text-white transition-colors">Atmos</a></li>
+                        <li><a href="https://github.com/infastracture/cmshell" target="_blank" class="text-sm text-neutral-500 hover:text-white transition-colors">cmshell</a></li>
+                        <li><span class="text-sm text-neutral-600">inSeaBIOS <span class="text-[10px] text-amber-500/60 font-mono ml-1">WIP</span></span></li>
+                        <li><span class="text-sm text-neutral-600">proboot <span class="text-[10px] text-amber-500/60 font-mono ml-1">WIP</span></span></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-xs font-semibold uppercase tracking-[0.15em] text-neutral-400 mb-4">Resources</h4>
+                    <ul class="space-y-2.5">
+                        <li><a href="#roadmap" class="text-sm text-neutral-500 hover:text-white transition-colors">Roadmap</a></li>
+                        <li><a href="#features" class="text-sm text-neutral-500 hover:text-white transition-colors">Features</a></li>
+                        <li><a href="#" class="text-sm text-neutral-500 hover:text-white transition-colors">Wiki</a></li>
+                        <li><a href="#" class="text-sm text-neutral-500 hover:text-white transition-colors">Changelog</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-xs font-semibold uppercase tracking-[0.15em] text-neutral-400 mb-4">Community</h4>
+                    <ul class="space-y-2.5">
+                        <li><a href="#" class="text-sm text-neutral-500 hover:text-white transition-colors">Discord</a></li>
+                        <li><a href="#" class="text-sm text-neutral-500 hover:text-white transition-colors">Matrix</a></li>
+                        <li><a href="https://github.com/infastracture" target="_blank" class="text-sm text-neutral-500 hover:text-white transition-colors">Contribute</a></li>
+                        <li><a href="#contribute" class="text-sm text-neutral-500 hover:text-white transition-colors">Donate</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-xs font-semibold uppercase tracking-[0.15em] text-neutral-400 mb-4">Legal</h4>
+                    <ul class="space-y-2.5">
+                        <li><a href="#" class="text-sm text-neutral-500 hover:text-white transition-colors">MIT License</a></li>
+                        <li><a href="#" class="text-sm text-neutral-500 hover:text-white transition-colors">Privacy Policy</a></li>
+                        <li><a href="#" class="text-sm text-neutral-500 hover:text-white transition-colors">Terms</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-white/5 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+                <p class="text-xs text-neutral-600">© 2025 infastracture. All rights reserved.</p>
+                <p class="text-xs text-neutral-600">Built with <span class="text-sky-400/50">♥</span></p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const mobileBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileClose = document.getElementById('mobile-menu-close');
+        const mobileOverlay = document.getElementById('mobile-menu-overlay');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+
+        function openMenu() { mobileMenu.classList.remove('hidden'); document.body.style.overflow = 'hidden'; }
+        function closeMenu() { mobileMenu.classList.add('hidden'); document.body.style.overflow = ''; }
+
+        mobileBtn.addEventListener('click', openMenu);
+        mobileClose.addEventListener('click', closeMenu);
+        mobileOverlay.addEventListener('click', closeMenu);
+        mobileLinks.forEach(link => link.addEventListener('click', closeMenu));
+
+        let selectedAmount = null;
+
+        function selectAmount(el) {
+            document.querySelectorAll('.donate-card').forEach(c => c.classList.remove('selected'));
+            el.classList.add('selected');
+            selectedAmount = el.dataset.amount;
+            document.getElementById('custom-amount').value = '';
+        }
+
+        document.getElementById('custom-amount').addEventListener('input', function() {
+            if (this.value) {
+                document.querySelectorAll('.donate-card').forEach(c => c.classList.remove('selected'));
+                selectedAmount = null;
+            }
+        });
+
+        function handleDonate() {
+            const customVal = document.getElementById('custom-amount').value;
+            const amount = customVal ? customVal : selectedAmount;
+            const msgEl = document.getElementById('donate-msg');
+
+            if (!amount || amount <= 0) {
+                msgEl.classList.remove('hidden');
+                msgEl.className = 'mt-4 text-sm text-red-400';
+                msgEl.textContent = 'Please select or enter an amount first.';
+                return;
+            }
+
+            const paypalUrl = `https://www.paypal.com/donate/?business=AhmedElamir76&amount=${encodeURIComponent(amount)}&currency_code=USD`;
+            window.open(paypalUrl, '_blank');
+
+            msgEl.classList.remove('hidden');
+            msgEl.className = 'mt-4 text-sm text-emerald-400';
+            msgEl.textContent = `Redirecting to PayPal for $${amount}... Thank you for supporting infastracture!`;
+        }
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+        document.querySelectorAll('section > div').forEach((el, i) => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = `opacity 0.6s ease ${i * 0.05}s, transform 0.6s ease ${i * 0.05}s`;
+            observer.observe(el);
+        });
+
+        const hero = document.querySelector('section > div');
+        if (hero) { hero.style.opacity = '1'; hero.style.transform = 'translateY(0)'; }
+    </script>
+</body>
+</html>
