@@ -3,9 +3,15 @@
 infastracture is an Open Source Software Distribution that aims to be Free For Everyone (FFE).
 
 Our projects:
-Atmos -- A hyprland linux distribution\n
-cmShell -- Minimal shell for ricers\n
-proboot -- Rust bootloader that ports full UEFI to Probooks.\n
-inSeaBIOS -- Special version of SeaBIOS\n
+Atmos -- A hyprland linux distribution
+
+
+cmShell -- Minimal shell for ricers
+
+
+proboot -- Rust bootloader that ports full UEFI to Probooks.
+
+
+inSeaBIOS -- Special version of SeaBIOS
 
 
